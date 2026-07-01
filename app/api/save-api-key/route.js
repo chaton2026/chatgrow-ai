@@ -23,11 +23,16 @@ export async function POST(request) {
 
     const lines = existing
       .split(/\r?\n/)
-      .filter((line) => !line.startsWith("OPENAI_API_KEY="));
+      .filter(
+        (line) =>
+          !line.startsWith("GEMINI_API_KEY=") && !line.startsWith("OPENAI_API_KEY=")
+      );
 
+    lines.push(`GEMINI_API_KEY=${apiKey.trim()}`);
     lines.push(`OPENAI_API_KEY=${apiKey.trim()}`);
 
     await fs.writeFile(envPath, `${lines.join("\n")}\n`, "utf8");
+    process.env.GEMINI_API_KEY = apiKey.trim();
     process.env.OPENAI_API_KEY = apiKey.trim();
 
     return Response.json({
